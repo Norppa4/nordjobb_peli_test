@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nordjobb peli / spel</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    background-image: url("taustakuva2.png");
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scrol;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    font-family: 'Poppins', 'Nunito', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .menu, .questions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px; 
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Grid layout for question choices on computer screens */
+  .cardsContainer {
+    background-color: #1D9984; 
+    color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 600px) {
+    .cardsContainer {
+      grid-template-columns: 1fr; 
+    }
+  }
+
+  .card {
+    background: #FFFFFF;
+    padding: 20px 30px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #000000;
+    transition: transform 0.2s, background 0.2s;
+    font-family: 'Poppins';
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    min-height: 60px;
+  }
+
+  .card:active {
+    transform: scale(0.98);
+  }
+
+  .card2 {
+    background: #1D9984;
+    padding: 15px 45px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    font-family: 'Poppins';  
+    border: 1px solid black;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    font-size: 18px;
+    color: #fff;
+  }
+  
+  .card2:hover {
+    background: #157a69;
+    transform: scale(1.03);
+  }
+
+  .questionTitle {
+    font-size: 24px;
+    margin-bottom: 15px;
+    background-color: #FFEB85; 
+    color: #000000;
+    padding: 15px 30px;
+    border-radius: 3px;
+    display: inline-block;
+    font-family: 'Poppins';
+    border: 1px solid black;
+    font-weight: bold;
+  }
+
+  #result {
+    display: none;
+    flex-direction: column;   
+    align-items: center;      
+    justify-content: center; 
+    gap: 20px;               
+    margin-top: 20px;
+    width: 100%;  
+    max-width: 600px;
+    font-family: 'Poppins';             
+  }
+
+  #resultImage {
+    width: 350px;
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 20px auto; 
+    border-radius: 10px;
+  }
+
+  #resultBox {
+    display: block; 
+    background-color: #1D9984;
+    padding: 20px 30px;
+    border-radius: 3px;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Poppins';   
+    border: 1px solid black;            
+  }
+
+  #resultBox2 {
+    display: block;  
+    background-color: #FFEB85;
+    padding: 12px 25px;
+    border-radius: 3px;
+    color: #000000;
+    text-align: center;
+    width: 100%;
+    max-width: 400px; 
+    font-family: 'Poppins';
+    border: 1px solid black;   
+    font-weight: bold;    
+  }
+
+  #resultText {
+    font-size: 22px;
+    line-height: 1.6;
+  }
+
+  #menuImage {
+    display: block;
+    margin: 20px auto; 
+    width: 300px;
+    max-width: 90%;
+    height: auto;
+  }
+
+  #jobLinkBox {
+    display: none;
+    background-color: #FFEB85;
+    color: #000000;
+    padding: 15px 30px;
+    border-radius: 3px;
+    font-family: 'Poppins';
+    border: 1px solid black;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+    margin-top: 20px;
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  #jobLinkBox:hover {
+    background-color: #ffd933;
+    transform: scale(1.03);
+  }
+  #backBtn {
+    display: none;
+    margin-top: 20px;
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid black;
+  }
+
+  /* UUSI: Ponnahdusikkunan taustapeitto (tummennus) */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* UUSI: Ponnahdusikkuna (eteen tuleva laatikko) */
+  .modal-box {
+    background-color: #1D9984;
+    color: #fff;
+    padding: 30px;
+    border-radius: 3px;
+    border: 2px solid black;
+    max-width: 500px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: 'Poppins';
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+  }
+
+  .modal-box h3 {
+    margin-top: 0;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .modal-box p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+
+  /* UUSI: Sulkemispainike keltasella teemalla */
+  .modal-close-btn {
+    background-color: #FFEB85;
+    color: #000000;
+    padding: 12px 30px;
+    border-radius: 5px;
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+
+  .modal-close-btn:hover {
+    background-color: #ffd933;
+    transform: scale(1.05);
+  }
+</style>
+</head>
+
+<body>
+
+<div class="menu" id="menu">
+  <img src="nordjobb4.jpg" alt="Nordjobb" id="menuImage" style="border-radius: 12px; max-width: 300px;">
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="svenska">Testa vilken Nordjobbare du är</div> 
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="suomi">Testaa mikä nordjobbari olet</div>
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="dansk">Test hvilken Nordjobber du er</div>
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="norsk">Test hva slags Nordjobber du er</div>
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="islenska">Prófaðu hvaða Nordjobberi þú ert</div>
+  <div class="card" style="width: 100%; max-width: 600px; box-sizing: border-box; background-color: #FFEB85; color: #000000;" data-language="faari">Prófaðu hvaða Nordjobberi þú ert</div>
+  
+  <div class="card2" id="infoBtn" style="width: 100%; max-width: 600px; box-sizing: border-box;">Info</div>
+</div>
+
+<div class="modal-overlay" id="infoModal">
+  <div class="modal-box">
+    <h3></h3>
+    <p>
+    Pelin tarkoitus on tuottaa hyvää mieltä.<br>
+    Nora Dahlbacka, Nordjobblähettiläs 2025-2026 <br><br>
+
+    Spelets syfte är att sprida glädje och gott humör.<br>
+    Nora Dahlbacka, Nordjobbambassadör 2025-2026 <br><br>
+
+    Spillets formål er at sprede godt humør.<br>
+    Nora Dahlbacka, Nordjobbambassadør 2025-2026 <br><br>
+
+    Spillets formål er å spre godt humør.<br>
+    Nora Dahlbacka, Nordjobbambassadør 2025-2026<br><br>
+
+    Tilgangur leiksins er að koma fólki í gott skap.<br>
+    Nora Dahlbacka, Nordjobbsendiherra 2025-2026<br><br>
+
+    Endamálið við spælinum er at skapa gott lag.<br>
+    Nora Dahlbacka, Norðjobbambassadørur 2025-2026 <br><br>
+  
+    </p>
+    <button class="modal-close-btn" id="closeModalBtn">
+      <span>✖</span>
+    </button>
+  </div>
+</div>
+
+<div class="questions" id="questions1" style="display:none;">
+  <div class="questionTitle"></div>
+  <div class="cardsContainer" id="questionCards1"></div>
+</div>
+
+<div class="questions" id="questions2" style="display:none;">
+  <div class="questionTitle"></div>
+  <div class="cardsContainer" id="questionCards2"></div>
+</div>
+
+<div class="questions" id="questions3" style="display:none;">
+  <div class="questionTitle"></div>
+  <div class="cardsContainer" id="questionCards3"></div>
+</div>
+
+<div class="questions" id="questions4" style="display:none;">
+  <div class="questionTitle"></div>
+  <div class="cardsContainer" id="questionCards4"></div>
+</div>
+
+<div id="result">
+  <div id="resultBox">
+    <div id="resultText"></div>
+  </div>
+  <img id="resultImage" alt="Hahmo" />
+</div>
+
+<a id="jobLinkBox" target="_blank">Linkki</a>
+  
+<div class="card2" id="backBtn">Palaa alkuun</div>
+
+<script>
+  
+const totalRounds = 4;
+let currentLanguage = "suomi";
+
+const characters = [
+  "hahmo1","hahmo2","hahmo3","hahmo4","hahmo5","hahmo6"
+];
+const characterNames = {
+  hahmo1: "Logistiikka ja varastotyö",
+  hahmo2: "Turismi ja hotelli",
+  hahmo3: "Sosiaali- ja hoiva-ala",
+  hahmo4: "Puutarha ja maatalous",
+  hahmo5: "Ravintola-ala",
+  hahmo6: "Siivous ja puhtaanapito"
+};
+const questionsExplanation = {
+  hahmo1: "Viihdyt käytännönläheisessä työssä, jossa korostuvat järjestelmällisyys ja fyysinen tekeminen.",
+  hahmo2: "Pidät ihmisten kohtaamisesta ja viihdyt kansainvälisessä sekä vaihtelevassa ympäristössä.",
+  hahmo3: "Sinua motivoi ihmisten auttaminen ja työ, jossa empatia ja vuorovaikutus ovat keskiössä.",
+  hahmo4: "Viihdyt luonnonläheisessä työssä, joka on käytännönläheistä ja fyysistä.",
+  hahmo5: "Toimit hyvin kiireessä ja nautit vauhdikkaasta asiakaspalvelutyöstä.",
+  hahmo6: "Pidät tarkasta ja huolellisesta työstä, jossa näet selkeän lopputuloksen."
+};
+
+let scores = {};
+function resetScores() {
+  characters.forEach(h => scores[h] = 0);
+}
+resetScores();
+
+const displayQuestions = [
+  "Millainen on luonteesi?",
+  "Missä viihdyt parhaiten?",
+  "Mitä haluaisit oppia työssä?",
+  "Jos saisit valita, mikä eläin olisit?"
+];
+
+const questionsData = [
+  ["Atleettinen","Sosiaalinen","Ihmisläheinen","Luonnonläheinen","Energinen","Puuhastelija"],
+  ["Omassa rauhassa","Kansainvälisessä ympäristössä","Tuttujen kanssa","Ulkona","Eloisassa ilmapiirissä","Sisätiloissa"],
+  ["Tarkkuutta","Asiakaspalvelua","Hoivatyötä","Fyysistä kestävyyttä","Kiireen alla työskentelyä","Pitkäjänteisyyttä"],
+  ["Muurahainen","Hylje","Susi","Hirvi","Kettu","Ilves"]
+];
+
+const questionsLink = [
+  ["hahmo1","hahmo2","hahmo3","hahmo4","hahmo5","hahmo6"],
+  ["hahmo1","hahmo2","hahmo3","hahmo4","hahmo5","hahmo6"],
+  ["hahmo1","hahmo2","hahmo3","hahmo4","hahmo5","hahmo6"],
+  ["hahmo1","hahmo2","hahmo3","hahmo4","hahmo5","hahmo6"]
+];
+
+const displayQuestionsSV = [
+  "Hurdan är din personlighet?",
+  "Var trivs du bäst?",
+  "Vad vill du lära dig i arbetet?",
+  "Om du fick välja, vilket djur skulle du vara?"
+];
+
+const questionsDataSV = [
+  ["Atletisk","Social","Människonära","Naturnära","Energisk","Händig"],
+  ["I lugn och ro","I internationell miljö","Med bekanta","Utomhus","I livlig miljö","Inomhus"],
+  ["Noggrannhet","Kundservice","Vårdarbete","Fysisk uthållighet","Arbeta under tidspress","Tålamod"],
+  ["Myra","Säl","Varg","Älg","Räv","Lodjur"]
+];
+
+const characterNamesSV = {
+  hahmo1: "Lager och Logistik",
+  hahmo2: "Turism och hotell",
+  hahmo3: "Social- och vårdbranschen",
+  hahmo4: "Trädgård och jordbruk",
+  hahmo5: "Restaurangbranschen",
+  hahmo6: "Städning"
+};
+
+const questionsExplanationSV = {
+  hahmo1: "Du trivs i praktiskt arbete där struktur och fysiskt arbete är viktiga.",
+  hahmo2: "Du gillar att möta människor och trivs i en internationell och varierande miljö.",
+  hahmo3: "Du motiveras av att hjälpa människor och arbete där empati och kommunikation är centralt.",
+  hahmo4: "Du trivs i naturnära arbete som är praktiskt och fysiskt.",
+  hahmo5: "Du arbetar bra under tidspress och gillar ett snabbt kundservicearbete.",
+  hahmo6: "Du gillar noggrant och omsorgsfullt arbete där du ser ett tydligt resultat."
+
+};
+const characterNamesDK = {
+  hahmo1: "Logistik og lagerarbejde",
+  hahmo2: "Turisme og hotel",
+  hahmo3: "Social- og sundhedsarbejde",
+  hahmo4: "Havebrug og landbrug",
+  hahmo5: "Restaurantbranchen",
+  hahmo6: "Rengøring og renholdelse"
+};
+
+const displayQuestionsDK = [
+  "Hvordan er din personlighed?",
+  "Hvor trives du bedst?",
+  "Hvad vil du lære i arbejdet?",
+  "Hvis du kunne vælge, hvilket dyr ville du være?"
+];
+
+const questionsDataDK = [
+  ["Atletisk","Social","Menneskenær","Naturnær","Energisk","Håndværker"],
+  ["I rolige omgivelser","I internationalt miljø","Med bekendte","Udendørs","I livligt miljø","Indendørs"],
+  ["Nøjagtighed","Kundeservice","Omsorgsarbejde","Fysisk udholdenhed","Arbejde under tidspress","Tålmodighed"],
+  ["Myre","Sæl","Ulv","Elg","Ræv","Loss"]
+];
+
+const questionsExplanationDK = {
+  hahmo1: "Du trives i praktisk arbejde med fokus på struktur og fysisk aktivitet.",
+  hahmo2: "Du kan lide at møde mennesker og trives i et internationalt og varieret miljø.",
+  hahmo3: "Du motiveres af at hjælpe mennesker og arbejde med empati og kommunikation.",
+  hahmo4: "Du trives i natur- og praktisk arbejde med fysisk aktivitet.",
+  hahmo5: "Du arbejder godt under travlhed og kan lide et hurtigt kundeservicearbejde.",
+  hahmo6: "Du kan lide præcist og omhyggeligt arbejde, hvor du ser et tydeligt resultat."
+};
+
+const characterNamesNO = {
+  hahmo1: "Logistikk og lagerarbeid",
+  hahmo2: "Turisme og hotell",
+  hahmo3: "Sosial- og helsearbeid",
+  hahmo4: "Hagebruk og landbruk",
+  hahmo5: "Restaurantbransjen",
+  hahmo6: "Renhold og rengjøring"
+};
+
+const displayQuestionsNO = [
+  "Hvordan er personligheten din?",
+  "Hvor trives du best?",
+  "Hva vil du lære i jobben?",
+  "Hvis du kunne velge, hvilket dyr ville du vært?"
+];
+
+const questionsDataNO = [
+  ["Atletisk","Sosial","Menneskenær","Naturnær","Energisk","Hendig"],
+  ["I rolige omgivelser","I internasjonalt miljø","Med kjente","Utendørs","I livlig miljø","Innendørs"],
+  ["Nøyaktighet","Kundeservice","Omsorgsarbeid","Fysisk utholdenhet","Arbeid under tidspress","Tålmodighet"],
+  ["Maure","Sel","Ulv","Elg","Rev","Gaupe"]
+];
+
+const questionsExplanationNO = {
+  hahmo1: "Du trives i praktisk arbeid med struktur og fysisk aktivitet.",
+  hahmo2: "Du liker å møte mennesker og trives i et internasjonalt og variert miljø.",
+  hahmo3: "Du motiveres av å hjelpe mennesker og arbeid med empati og kommunikasjon.",
+  hahmo4: "Du trives i natur- og praktisk arbeid med fysisk aktivitet.",
+  hahmo5: "Du jobber godt under stress og liker et travelt kundeservicearbeid.",
+  hahmo6: "Du liker nøyaktig og omsorgsfullt arbeid hvor resultatet er tydelig."
+};
+
+const characterNamesIS = {
+  hahmo1: "Flutningur og lagervinna",
+  hahmo2: "Ferðaþjónusta og hótel",
+  hahmo3: "Félags- og heilbrigðisþjónusta",
+  hahmo4: "Garðyrkja og landbúnaður",
+  hahmo5: "Veitingageirinn",
+  hahmo6: "Þrif og hreinsun"
+};
+
+const displayQuestionsIS = [
+  "Hvernig er persónuleiki þinn?",
+  "Hvar líður þér best?",
+  "Hvað viltu læra í starfi?",
+  "Ef þú mættir velja, hvaða dýr værir þú?"
+];
+
+const questionsDataIS = [
+  ["Íþróttalegur","Félagslyndur","Mannlegur","Náttúrulegur","Orkumikill","Hagur"],
+  ["Í rólegu umhverfi","Í alþjóðlegu umhverfi","Með kunningjum","Útivist","Í líflegu umhverfi","Innan dyra"],
+  ["Nákvæmni","Þjónusta","Umönnun","Líkamlegt úthald","Vinna undir álagi","Þolinmæði"],
+  ["Maur","Selur","Úlfur","Elgur","Refur","Gaupa"]
+];
+
+const questionsExplanationIS = {
+  hahmo1: "Þér líður vel í verklegu starfi þar sem skipulag og líkamleg vinna skipta máli.",
+  hahmo2: "Þú nýtur þess að hitta fólk og starfa í fjölbreyttu alþjóðlegu umhverfi.",
+  hahmo3: "Þú ert hvattur af því að hjálpa fólki og vinna með samkennd og samskipti.",
+  hahmo4: "Þér líður vel í náttúru- og verklegu starfi með líkamlega virkni.",
+  hahmo5: "Þú vinnur vel undir álagi og nýtur hraðs þjónustustarfs.",
+  hahmo6: "Þér líkar nákvæmt og vandvirkt starf þar sem árangur sést greinilega."
+};
+
+const characterNamesFO = {
+  hahmo1: "Logistikk og goymsluarbeiði",
+  hahmo2: "Turisma og hotell",
+  hahmo3: "Sosial- og heilsuarbeiði",
+  hahmo4: "Urtagarðs- og landbúnaður",
+  hahmo5: "Matstovuvinna",
+  hahmo6: "Reingerð og reinhald"
+};
+
+const displayQuestionsFO = [
+  "Hvussu er tín persónleiki?",
+  "Hvar trívist tú best?",
+  "Hvat vilt tú læra í arbeiði?",
+  "Um tú kundi valt, hvat djór vart tú?"
+];
+
+const questionsDataFO = [
+  ["Ítróttarligur","Sosialur","Mannakendur","Náttúrukendur","Orkuríkur","Hagur"],
+  ["Í friði","Í altjóða umhvørvi","Við kenningum","Úti","Í lívligum umhvørvi","Inni"],
+  ["Nágreinileiki","Kundatænasta","Umhugsni","Líkamligt úthald","Arbeiði undir trýsti","Tolinmóð"],
+  ["Maurur","Sælur","Úlvur","Elgur","Revur","Geypa"]
+];
+
+const questionsExplanationFO = {
+  hahmo1: "Tú trívist í praktiskum arbeiði við skipan og kropsligari arbeiði.",
+  hahmo2: "Tú dámar at møta fólki og trívist í altjóða og fjølbroyttum umhvørvi.",
+  hahmo3: "Tú ert motiverað/ur av at hjálpa fólki og arbeiða við empati og samskifti.",
+  hahmo4: "Tú trívist í náttúru- og praktiskum arbeiði við kropsligari virkni.",
+  hahmo5: "Tú arbeiðir væl undir ferð og dámar skjótt tænastuarbeiði.",
+  hahmo6: "Tú dámar nágreint og varligt arbeiði, har úrslitið sæst greitt."
+};
+
+const languageLinks = {
+  suomi: "https://www.nordjobb.org/fi/hae-toita",
+  svenska: "https://www.nordjobb.org/sv/soek-jobb",
+  dansk: "https://www.nordjobb.org/da/soeg-job",
+  norsk: "https://www.nordjobb.org/no/soek-jobb",
+  islenska: "https://www.nordjobb.org/is/saekja-um-vinnu",
+  faari: "https://www.nordjobb.org/fo/soek-starv",
+};
+
+const menu = document.getElementById("menu");
+const backBtn = document.getElementById("backBtn");
+const jobLinkBox = document.getElementById("jobLinkBox");
+let currentRound = 0;
+
+const rounds = [
+  { div: document.getElementById("questions1"), cards: document.getElementById("questionCards1") },
+  { div: document.getElementById("questions2"), cards: document.getElementById("questionCards2") },
+  { div: document.getElementById("questions3"), cards: document.getElementById("questionCards3") },
+  { div: document.getElementById("questions4"), cards: document.getElementById("questionCards4") }
+];
+
+// Kielivalinta ja maavalinnat
+
+menu.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("click", () => {
+    const lang = card.dataset.language;
+    
+    // Varmistetaan, että klikatulla kortilla on jokin tuetuista kielistä
+    if (["suomi", "svenska", "dansk", "norsk", "islenska", "faari"].includes(lang)) {
+      currentLanguage = lang;
+      menu.style.display = "none";
+      currentRound = 0;
+      resetScores();
+      showQuestion();
+    }
+  });
+});
+
+// UUSI: Modal-logiikka avaamiseen ja sulkemiseen
+const infoBtn = document.getElementById('infoBtn');
+const infoModal = document.getElementById('infoModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+
+infoBtn.addEventListener('click', (e) => {
+  e.stopPropagation(); 
+  infoModal.style.display = "flex"; // Avaa laatikon ruudun eteen
+});
+
+closeModalBtn.addEventListener('click', () => {
+  infoModal.style.display = "none"; // Sulkee laatikon
+});
+
+// Suljetaan laatikko myös jos klikataan mustaa tausta-aluetta laatikon ulkopuolella
+infoModal.addEventListener('click', (e) => {
+  if (e.target === infoModal) {
+    infoModal.style.display = "none";
+  }
+});
+
+// Takaisin alkuun -painikkeen toiminnallisuus
+backBtn.addEventListener("click", () => {
+  rounds.forEach(r => r.div.style.display = "none");
+  document.getElementById("result").style.display = "none";
+  jobLinkBox.style.display = "none";
+  backBtn.style.display = "none"; 
+  menu.style.display = "flex";
+});
+
+function showQuestion(){
+  rounds.forEach(r => r.div.style.display = "none");
+  backBtn.style.display = "none"; 
+
+  const round = rounds[currentRound];
+  round.div.style.display = "flex";
+
+  let questions = displayQuestions;
+  let options = questionsData;
+
+  if (currentLanguage === "svenska") {
+    questions = displayQuestionsSV;
+    options = questionsDataSV;
+  }
+  else if (currentLanguage === "dansk") {
+    questions = displayQuestionsDK;
+    options = questionsDataDK;
+  }
+  else if (currentLanguage === "islenska") {
+    questions = displayQuestionsIS;
+    options = questionsDataIS;
+  }
+  else if (currentLanguage === "norsk") {
+    questions = displayQuestionsNO;
+    options = questionsDataNO;
+  }
+  else if (currentLanguage === "faari") {
+    questions = displayQuestionsFO;
+    options = questionsDataFO;
+  }
+
+  round.div.querySelector(".questionTitle").textContent = questions[currentRound];
+  round.cards.innerHTML = "";
+
+  options[currentRound].forEach((text, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.textContent = text;
+
+    card.addEventListener("click", () => {
+      const character = questionsLink[currentRound][index];
+      scores[character]++;
+      currentRound++;
+
+      if(currentRound < totalRounds){
+        showQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    round.cards.appendChild(card);
+  });
+}
+
+function showResult(){
+  rounds.forEach(r => r.div.style.display = "none");
+
+  const maxScore = Math.max(...Object.values(scores));
+  const topCharacters = Object.keys(scores).filter(
+    h => scores[h] === maxScore
+  );
+  const winner = topCharacters[Math.floor(Math.random() * topCharacters.length)];
+  const resultText = document.getElementById("resultText");
+  const resultImage = document.getElementById("resultImage");
+  const resultDiv = document.getElementById("result");
+
+  let names = characterNames;
+  let explanations = questionsExplanation;
+  let linkText = "Tutustu avoimiin työpaikkoihin tästä linkistä!";
+  let backText = "Palaa alkuun";
+
+  if (currentLanguage === "svenska") {
+    names = characterNamesSV;
+    explanations = questionsExplanationSV;
+    linkText = "Kolla in lediga jobb via den här länken!";
+    backText = "Tillbaka till start";
+  }
+  if (currentLanguage === "norsk") {
+    names = characterNamesNO;
+    explanations = questionsExplanationNO;
+    linkText = "Sjekk ut ledige stillinger via denne lenken!";
+    backText = "Tilbake til start";
+  }
+
+  if (currentLanguage === "dansk") {
+    names = characterNamesDK;
+    explanations = questionsExplanationDK;
+    linkText = "Tjek ledige stillinger ud via dette link!";
+    backText = "Tilbage til start";
+  }
+
+  if (currentLanguage === "islenska") {
+    names = characterNamesIS;
+    explanations = questionsExplanationIS;
+    linkText = "Skoðaðu laus störf í boði í gegnum þennan tengil!";
+    backText = "Til baka á upphaf";
+  }
+
+  if (currentLanguage === "faari") {
+    names = characterNamesFO;
+    explanations = questionsExplanationFO;
+    linkText = "Kaga eftir tøkum størvum via hesa leinkjuna!";
+    backText = "Aftur á byrjan";
+  }
+
+  if (currentLanguage === "kalaallisut") {
+    names = characterNamesKL;
+    explanations = questionsExplanationKL;
+    linkText = "Atorfiit suliffissat uani nittartakkami alakkarneqarsinnaapput!";
+    backText = "Aallartiffianut uterit";
+  }
+
+  resultText.innerHTML = `
+    <strong><u>${names[winner]}</u></strong><br><br>
+    ${explanations[winner]}
+  `;
+  resultImage.src = winner + ".png";
+  resultDiv.style.display = "flex";
+
+  jobLinkBox.href = languageLinks[currentLanguage];
+  jobLinkBox.textContent = linkText;
+  jobLinkBox.style.display = "block";
+  backBtn.textContent = backText;
+  backBtn.style.display = "block";
+}
+</script>
+</body>
+</html>
